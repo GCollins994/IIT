@@ -12,6 +12,14 @@ ScreenManagement:
     EmployeeCheck:
     AddPage:
 
+<TestWidget@GridLayout>:
+    pos: 100, 100
+    size: 100, 100
+    cols: 3
+    rows: 3
+    on_parent:
+        if not self.children: [self.add_widget(Button(text=str(i))) for i in range(1, 10)]
+
 
 <LoginP>:
     name: "log"
@@ -21,6 +29,16 @@ ScreenManagement:
             size: self.size
             source: 'background.png'
 
+    BoxLayout:
+        orientation: "vertical"
+        size_hint: 0.2, 0.4
+        pos_hint: {"x": 0.37, "y": 0.43}
+        canvas:
+            Rectangle:
+                pos: self.pos
+                size: self.size
+                source: 'logo.png'
+
 
     BoxLayout:
         id: login_layout
@@ -29,7 +47,7 @@ ScreenManagement:
         padding: [10]
         spacing: 10
         size_hint: 0.3, 0.2
-        pos_hint: {'x': .33 ,'y': .4}
+        pos_hint: {'x': .33 ,'y': .2}
         TextInput:
             id: login
             write_tab: False
@@ -53,6 +71,8 @@ ScreenManagement:
             text: "Login"
             font_name: 'Arial'
             font_size: 28
+
+
 
 
 <MainMenu>:
@@ -194,6 +214,7 @@ ScreenManagement:
                     font_size: 26
                     text: "Add Employee"
                     on_release: app.root.current = "addpage"
+                    disabled: False
                     background_normal: ''
                     background_color: 1, 1, 1, 1
                     color: 0, 0, 0, 1
@@ -242,6 +263,222 @@ ScreenManagement:
                     background_normal: ''
                     background_color: 78, 79, 79, 1
                     color: 0, 0, 0, 1
+
+
+
+
+
+
+<CRUD>:
+    id_text: id_text
+    id_data: id_data
+
+    title: self.mode + " State"
+    size_hint: None, None
+    size: 1000, 700
+    auto_dismiss: False
+
+    BoxLayout:
+        orientation: "vertical"
+        GridLayout:
+            cols: 2
+            Label:
+                id: id_text
+                text: "ID"
+                color: 0,0,0,1
+            Label:
+                id: id_data
+                text: root.data[10]  # root.userid
+                multiline: False
+            Label:
+                text: "Last Name"
+                color: 0,0,0,1
+            TextInput:
+                id: lastname
+                text: root.data[1]  # root.lname
+                multiline: False
+            Label:
+                text: "First Name"
+                color: 0,0,0,1
+            TextInput:
+                id: firstname
+                text: root.data[0]  # root.fname
+                multiline: False
+            Label:
+                text: "Address Street:"
+                color: 0,0,0,1
+            TextInput:
+                id: address
+                text: root.data[2]
+                multiline: False
+            Label:
+                text: "Address City:"
+                color: 0,0,0,1
+            TextInput:
+                id: addresscity
+                text: root.data[3]
+                multiline: False
+            Label:
+                text: "Address State:"
+                color: 0,0,0,1
+            TextInput:
+                id: addressstate
+                text: root.data[4]
+                multiline: False
+            Label:
+                text: "Address Zip:"
+                color: 0,0,0,1
+            TextInput:
+                id: addresszip
+                text: root.data[5]
+                multiline: False
+            Label:
+                text: "Birth Month:"
+                color: 0,0,0,1
+            TextInput:
+                id: mob
+                text: root.data[6]
+                multiline: False
+            Label:
+                text: "Birth Day:"
+                color: 0,0,0,1
+            TextInput:
+                id: dob
+                text: root.data[7]
+                multiline: False
+            Label:
+                text: "Birth Year:"
+                color: 0,0,0,1
+            TextInput:
+                id: yob
+                text: root.data[8]
+                multiline: False
+            Label:
+                text: "Health Care:"
+                color: 0,0,0,1
+            TextInput:
+                id: healthCare
+                text: root.data[9]
+                multiline: False
+            Label:
+                text: "Married:"
+                color: 0,0,0,1
+            TextInput:
+                id: married
+                text: root.data[11]
+                multiline: False
+            Label:
+                text: "Hire Month:"
+                color: 0,0,0,1
+            TextInput:
+                id: hireMonth
+                text: root.data[12]
+                multiline: False
+            Label:
+                text: "Hire Day:"
+                color: 0,0,0,1
+            TextInput:
+                id: hireDay
+                text: root.data[13]
+                multiline: False
+            Label:
+                text: "Hire Year:"
+                color: 0,0,0,1
+            TextInput:
+                id: hireYear
+                text: root.data[14]
+                multiline: False
+            Label:
+                text: "kParticipate:"
+                color: 0,0,0,1
+            TextInput:
+                id: kParticipate
+                text: root.data[16]
+                multiline: False
+            Label:
+                text: "kContribution:"
+                color: 0,0,0,1
+            TextInput:
+                id: kContribution
+                text: root.data[17]
+                multiline: False
+            Label:
+                text: "pension Participate:"
+                color: 0,0,0,1
+            TextInput:
+                id: pensionP
+                text: root.data[18]
+                multiline: False
+            Label:
+                text: "pension Contribution:"
+                color: 0,0,0,1
+            TextInput:
+                id: pensionC
+                text: root.data[19]
+                multiline: False
+            Label:
+                text: "union Participate:"
+                color: 0,0,0,1
+            TextInput:
+                id: unionP
+                text: root.data[20]
+                multiline: False
+            Label:
+                text: "pay Type:"
+                color: 0,0,0,1
+            TextInput:
+                id: payType
+                text: root.data[21]
+                multiline: False
+            Label:
+                text: "pay Amount:"
+                color: 0,0,0,1
+            TextInput:
+                id: payAmount
+                text: root.data[22]
+                multiline: False
+            Label:
+                text: "healthcare Insurance:"
+                color: 0,0,0,1
+            TextInput:
+                id: healthcareIns
+                text: root.data[24]
+                multiline: False
+            Label:
+                text: "dental Insurance:"
+                color: 0,0,0,1
+            TextInput:
+                id: dentalIns
+                text: root.data[25]
+                multiline: False
+            Label:
+                text: "optical Insurance:"
+                color: 0,0,0,1
+            TextInput:
+                id: opticalIns
+                text: root.data[26]
+                multiline: False
+            Label:
+                text: "healthTier:"
+                color: 0,0,0,1
+            TextInput:
+                id: healthTier
+                text: root.data[27]
+                multiline: False
+
+
+        Button:
+            size_hint: 0.2, 0.2
+            text: "Confirm " + root.mode
+            on_release:
+                root.package_changes(firstname.text, lastname.text, address.text, addresscity.text, addressstate.text, addresszip.text, mob.text, dob.text, yob.text, healthCare.text, married.text, hireMonth.text, hireDay.text, hireYear.text, kParticipate.text, kContribution.text, pensionP.text, pensionC.text, unionP.text, payType.text, payAmount.text,healthcareIns.text, dentalIns.text, opticalIns.text, healthTier.text)
+                app.get_running_app().root.get_screen('main').update_changes(root)
+                root.dismiss()
+        Button:
+            size_hint: 0.2, 0.2
+            text: "Cancel " + root.mode
+            on_release: root.dismiss()
+
 
 
 
@@ -490,7 +727,7 @@ ScreenManagement:
                     on_release: app.root.current = "main"
                     text: "Close"
                 Button:
-                    on_release: root.execute()
+                    on_release: app.root.current = "employeecheck"
                     text: "Calculating a check"
 
 
@@ -762,7 +999,7 @@ ScreenManagement:
                 Button:
                     text: "Save Changes"
                     on_release:
-                        (root.package_changes(employeeid.text,address.text, addresscity.text, addressstate.text, addresszip.text, mob.text, dob.text, yob.text, healthCare.text, married.text, hireMonth.text, hireDay.text, hireYear.text, kParticipate.text, kContribution.text, pensionP.text, pensionC.text, unionP.text, payType.text, payAmount.text,healthcareIns.text, dentalIns.text, opticalIns.text, healthTier.text), root.on_click(), root.on_click())
+                        (root.package_changes(employeeid.text,address.text, addresscity.text, addressstate.text, addresszip.text, mob.text, dob.text, yob.text, healthCare.text, married.text, hireMonth.text, hireDay.text, hireYear.text, kParticipate.text, kContribution.text, pensionP.text, pensionC.text, unionP.text, payType.text, payAmount.text,healthcareIns.text, dentalIns.text, opticalIns.text, healthTier.text), root.on_click())
                 Button:
                     text: "Back"
                     on_release: app.root.current = "main"
@@ -794,66 +1031,63 @@ ScreenManagement:
                 pos: self.pos
                 size: self.size
                 source: 'check.png'
-        FloatLayout:
-            BoxLayout:
-                orientation: "horizontal"
-                padding: 2
-                size_hint: 0.3, 0.87
-                pos_hint: {"center": (0.15, 0.5), "top": 0.30}
-                Label:
-                    text: root.finance_info[7]
-                    color: 0,0,0,1
-                Label:
-                    text: root.finance_info[6]
-                    color: 0,0,0,1
 
-        FloatLayout:
-            BoxLayout:
-                orientation: "horizontal"
-                spacing: 30
-                size_hint: 0.45, 0.87
-                pos_hint: {"x": 0.33, "y": 0.43}
-                Label:
-                    text: root.finance_info[5]
-                    color: 0,0,0,1
+        BoxLayout:
+            orientation: "horizontal"
+            padding: 2
+            size_hint: 0.3, 0.87
+            pos_hint: {"x": 0.12, "y": 0.30}
+            Label:
+                text: root.data_list[0]
+                color: 0,0,0,1
+            Label:
+                text: root.data_list[1]
+                color: 0,0,0,1
 
-        FloatLayout:
-            BoxLayout:
-                orientation: "vertical"
-                size_hint: 0.45, 0.87
-                pos_hint: {"x": 0.2, "y": 0.65}
-                Label:
-                    text: root.finance_info[8]
-                    color: 0,0,0,1
+        BoxLayout:
+            orientation: "horizontal"
+            spacing: 30
+            size_hint: 0.45, 0.87
+            pos_hint: {"x": 0.33, "y": 0.43}
+            Label:
+                text: root.data_list[10]
+                color: 0,0,0,1
 
-        FloatLayout:
-            BoxLayout:
-                orientation: "vertical"
-                spacing: 35
-                size_hint: 0.45, 0.87
-                pos_hint: {"x": 0.7, "y": 0.85}
-                Label:
-                    text: root.finance_info[0]
-                    color: 0,0,0,1
-                Label:
-                    text: root.finance_info[1]
-                    color: 0,0,0,1
-                Label:
-                    text: root.finance_info[2]
-                    color: 0,0,0,1
-                Label:
-                    text: root.finance_info[3]
-                    color: 0,0,0,1
+        BoxLayout:
+            orientation: "vertical"
+            size_hint: 0.45, 0.87
+            pos_hint: {"x": 0.2, "y": 0.65}
+            Label:
+                text: root.data_list[22]
+                color: 0,0,0,1
 
-        FloatLayout:
-            BoxLayout:
-                orientation: "horizontal"
-                padding: 20
-                size_hint: 0.45, 0.87
-                pos_hint: {"x": 0.7, "center": (0.92, 0.3)}
-                Label:
-                    text: root.finance_info[4]
-                    color: 0,0,0,1
+
+        BoxLayout:
+            orientation: "vertical"
+            spacing: 35
+            size_hint: 0.45, 0.87
+            pos_hint: {"x": 0.7, "y": 0.85}
+            Label:
+                text: root.finance_info[0]
+                color: 0,0,0,1
+            Label:
+                text: root.finance_info[1]
+                color: 0,0,0,1
+            Label:
+                text: root.finance_info[2]
+                color: 0,0,0,1
+            Label:
+                text: root.finance_info[3]
+                color: 0,0,0,1
+
+        BoxLayout:
+            orientation: "horizontal"
+            padding: 20
+            size_hint: 0.45, 0.87
+            pos_hint: {"x": 0.7, "y": 0.6}
+            Label:
+                text: root.finance_info[4]
+                color: 0,0,0,1
 
     BoxLayout:
         orientation: "horizontal"
@@ -930,82 +1164,72 @@ ScreenManagement:
                         padding: 20
                         spacing: 8
                         TextInput:
-                            id: fn
+                            id: firstname
                             write_tab: False
                             multiline: False
-                            on_text_validate: root.foo()
                             hint_text: "First Name"
                             font_size: 20
                         TextInput:
-                            id: ln
+                            id: lastname
                             write_tab: False
                             multiline: False
-                            on_text_validate: root.foo()
                             hint_text: "Last Name"
                             font_size: 20
                         TextInput:
-                            id: streetadd
+                            id: address
                             write_tab: False
                             multiline: False
-                            on_text_validate: root.foo()
                             hint_text: "Street Address"
                             font_size: 20
                         TextInput:
-                            id: cityadd
+                            id: addresscity
                             write_tab: False
                             multiline: False
-                            on_text_validate: root.foo()
                             hint_text: "City"
                             font_size: 20
                         TextInput:
-                            id: stateadd
+                            id: addressstate
                             write_tab: False
                             multiline: False
-                            on_text_validate: root.foo()
                             hint_text: "State"
                             font_size: 20
                         TextInput:
-                            id: zipadd
+                            id: addresszip
                             write_tab: False
                             multiline: False
-                            on_text_validate: root.foo()
                             hint_text: "Zip Code"
                             font_size: 20
                         BoxLayout:
                             orientation: "horizontal"
                             TextInput:
-                                id: bm
+                                id: mob
                                 input_filter: lambda text, from_undo: text.isnumeric() and text[:2 - len(self.text)]
                                 write_tab: False
                                 multiline: False
-                                on_text_validate: root.foo()
                                 hint_text: "Birth MM"
                                 font_size: 20
                             TextInput:
-                                id: bd
+                                id: dob
                                 input_filter: lambda text, from_undo: text.isnumeric() and text[:2 - len(self.text)]
                                 write_tab: False
                                 multiline: False
-                                on_text_validate: root.foo()
                                 hint_text: "Birth DD"
                                 font_size: 20
                             TextInput:
-                                id: by
+                                id: yob
                                 input_filter: lambda text, from_undo: text.isnumeric() and text[:4 - len(self.text)]
                                 write_tab: False
                                 multiline: False
-                                on_text_validate: root.foo()
                                 hint_text: "Birth YYYY"
                                 font_size: 20
                         TextInput:
-                            id: healthc
+                            id: healthCare
                             write_tab: False
                             multiline: False
-                            on_text_validate: root.foo()
                             hint_text: "HealthCare"
                             font_size: 20
                         Spinner:
-                            id: mar_spinner
+                            id: married
                             text: '<Marital Status>'
                             values: ['Married', 'Single']
                             on_text: root.on_choice1(self.text)
@@ -1014,27 +1238,24 @@ ScreenManagement:
                         BoxLayout:
                             orientation: "horizontal"
                             TextInput:
-                                id: hirem
+                                id: hireMonth
                                 input_filter: lambda text, from_undo: text.isnumeric() and text[:2 - len(self.text)]
                                 write_tab: False
                                 multiline: False
-                                on_text_validate: root.foo()
                                 hint_text: "Hired MM"
                                 font_size: 20
                             TextInput:
-                                id: hired
+                                id: hireDay
                                 input_filter: lambda text, from_undo: text.isnumeric() and text[:2 - len(self.text)]
                                 write_tab: False
                                 multiline: False
-                                on_text_validate: root.foo()
                                 hint_text: "Hired DD"
                                 font_size: 20
                             TextInput:
-                                id: hirey
+                                id: hireYear
                                 input_filter: lambda text, from_undo: text.isnumeric() and text[:4 - len(self.text)]
                                 write_tab: False
                                 multiline: False
-                                on_text_validate: root.foo()
                                 hint_text: "Hired YYYY"
                                 font_size: 20
 
@@ -1044,44 +1265,41 @@ ScreenManagement:
                         padding: 20
                         spacing: 20
                         Spinner:
-                            id: kpar_spinner
+                            id: kParticipate
                             text: '<kParticipation>'
                             values: ['Yes', 'No']
                             on_text: root.on_choice2(self.text)
                         TextInput:
-                            id: kcon
+                            id: kContribution
                             write_tab: False
                             multiline: False
-                            on_text_validate: root.foo()
                             hint_text: "kContribution"
                             font_size: 20
                         Spinner:
-                            id: penpar_spinner
+                            id: pensionP
                             text: '<Pension Participation>'
                             values: ['Yes', 'No']
                             on_text: root.on_choice3(self.text)
                         TextInput:
-                            id: pencon
+                            id: pensionC
                             write_tab: False
                             multiline: False
-                            on_text_validate: root.foo()
                             hint_text: "Penstion Contribution"
                             font_size: 20
                         Spinner:
-                            id: union_spinner
+                            id: unionP
                             text: '<Union Participation>'
                             values: ['Yes', 'No']
                             on_text: root.on_choice4(self.text)
                         Spinner:
-                            id: payType_spinner
+                            id: payType
                             text: '<Pay Type>'
                             values: ['Wage', 'Salary']
                             on_text: root.on_choice5(self.text)
                         TextInput:
-                            id: pay
+                            id: payAmount
                             write_tab: False
                             multiline: False
-                            on_text_validate: root.foo()
                             hint_text: "Payment"
                             font_size: 20
                     BoxLayout:
@@ -1089,28 +1307,25 @@ ScreenManagement:
                         padding: 20
                         spacing: 50
                         TextInput:
-                            id: hcare
+                            id: healthcareIns
                             write_tab: False
                             multiline: False
-                            on_text_validate: root.foo()
                             hint_text: "HealthCare Insurance"
                             font_size: 20
                         TextInput:
-                            id: dcare
+                            id: dentalIns
                             write_tab: False
                             multiline: False
-                            on_text_validate: root.foo()
                             hint_text: "Dental Insurance"
                             font_size: 20
                         TextInput:
-                            id: ocare
+                            id: opticalIns
                             write_tab: False
                             multiline: False
-                            on_text_validate: root.foo()
                             hint_text: "Optical Insurance"
                             font_size: 20
                         Spinner:
-                            id: hTier_spinner
+                            id: healthTier
                             text: '<Health Tier>'
                             values: ['1', '2', '3', '4']
                             on_text: root.on_choice6(self.text)
@@ -1130,13 +1345,10 @@ ScreenManagement:
                 spacing: 25
 
                 Button:
-                    id: "sub"
-                    font_size: 26
-                    on_release: root.on_click()
                     text: "Submit"
+                    on_release: root.on_click()
+
 
                 Button:
-                    id: "mainm"
-                    font_size: 26
                     text: "Back"
-                    on_release: root.backBttn()
+                    on_release: app.root.current = "main"
