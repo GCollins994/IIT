@@ -47,12 +47,21 @@ class Employee:
 
     cursorObject = connection.cursor()
 
-    def find(self, cursorObject=cursorObject):
+    def find(self):
         result = []
         result2 = []
         result3 = []
 
         try:
+
+            connection: Connection = pymysql.connect(host='localhost',
+                                                     port=3306,
+                                                     user='root',
+                                                     password='root',
+                                                     db='hrdb')
+
+            cursorObject = connection.cursor()
+
             cursorObject.execute(
                 'SELECT * FROM `employeeprofile` WHERE employeeID ="' + self.__employee_id + '"' + ' AND firstName ="' + self.__first_name + '"' +
                 ' AND lastName ="' + self.__last_name + '"')
