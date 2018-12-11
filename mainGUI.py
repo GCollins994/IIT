@@ -113,24 +113,30 @@ class SelectableButton(RecycleDataViewBehavior, Button):
         buttons = self.parent.parent.parent.parent.parent.parent.children[0].children
         for i in buttons:
             i.disabled = False
-            if i.text == 'just space':
-                i.on_press = App.get_running_app()
-                info_emp = i.on_press.root.get_screen('payroll')
-                info_emp1 = i.on_press.root.get_screen('edit')
-                info_emp.col_data = [
+            if i.text == "Edit":
+                editPage = App.get_running_app().root.get_screen('edit')
+                editPage.col_data = [
                     self.rv_data[self.start_point]['text'],
                     self.rv_data[self.start_point + 1]['text'],
                     self.rv_data[self.start_point + 2]['text']
                 ]
-                info_emp1.col_data = [
+                editPage.editConnection()
+
+            if i.text == "Pay Roll":
+                payrollPage = App.get_running_app().root.get_screen('payroll')
+                employeecheckPage = App.get_running_app().root.get_screen('employeecheck')
+                payrollPage.col_data = [
                     self.rv_data[self.start_point]['text'],
                     self.rv_data[self.start_point + 1]['text'],
                     self.rv_data[self.start_point + 2]['text']
                 ]
-
-                info_emp.hello()
-                info_emp1.hell0()
-
+                employeecheckPage.col_data = [
+                    self.rv_data[self.start_point]['text'],
+                    self.rv_data[self.start_point + 1]['text'],
+                    self.rv_data[self.start_point + 2]['text']
+                ]
+                payrollPage.payrollConnection()
+                employeecheckPage.employeecheckConnection()
 
 
 class MainMenu(Screen):
@@ -140,12 +146,14 @@ class MainMenu(Screen):
         super(MainMenu, self).__init__(**kwargs)
         self.get_users()
 
-        '''dropdown = CustomDropDown()
-        mainbutton = Button(text='Hello', size_hint=(None, None))
-        mainbutton.bind(on_release=dropdown.open)
-        dropdown.bind(on_select=lambda instance, x: setattr(mainbutton, 'text', x))'''
-
     def get_users(self):
+
+        connection: Connection = pymysql.connect(host='localhost',
+                                                 port=3306,
+                                                 user='root',
+                                                 password='root',
+                                                 db='hrdb')
+        cursorObject = connection.cursor()
 
         cursorObject.execute(
             'SELECT `employeeID`, `lastName`, `firstName` from `employeeprofile` order by `employeeID` asc')
@@ -163,6 +171,9 @@ class MainMenu(Screen):
     def refresh_table(self):
         self.clear_data()
         self.get_users()
+
+
+
 
 class LoginP(Screen):
 
@@ -215,26 +226,33 @@ class Alert(Popup):
 
 
 class EmployeeCheck(Screen):
-    check_list = ListProperty(["?", "?", "?"])
-    finance_info = ListProperty(["?", "?", "?", "?", "?","?", "?", "?","?"])
+    col_data = ListProperty(["?", "?", "?"])
+    finance_info = ListProperty(["?", "?", "?", "?", "?"])
+    data_list = ListProperty(
+        ["?", "?", "?", "?", "?", "?", "?", "?", "?", "?", "?", "?", "?", "?", "?", "?", "?", "?", "?", "?", "?", "?",
+         "?", "?", "?", "?", "?", "?"])
 
     def __init__(self, **kwargs):
         super(EmployeeCheck, self).__init__(**kwargs)
 
-    def set_attempts(self):
-        self.finance_info[0] = fl.get_federal_income_tax_deduction(int(self.check_list[0]), self.check_list[1])
-        self.finance_info[1] = fl.get_medicare_deduction(int(self.check_list[0]))
-        self.finance_info[2] = fl.get_state_income_tax_deduction(self.check_list[2], int(self.check_list[0]))
-        self.finance_info[3] = fl.get_social_security_deduction(int(self.check_list[0]))
-        self.finance_info[4] = fl.total_salary_deduction(int(self.check_list[0]), self.check_list[1],
-                                                         self.check_list[2])
-        self.finance_info[5] = self.check_list[3]
-        self.finance_info[6] = self.check_list[4]
-        self.finance_info[7] = self.check_list[5]
-        self.finance_info[8] = self.check_list[0]
+    def employeecheckConnection(self):
+        attempt = Employee.CheckInfo(self.col_data[0], self.col_data[1], self.col_data[2])
+        self.result = attempt.find()
+
+        for x in range(0, 28):
+            self.data_list[x] = self.result[x]
+
+        self.finance_info[0] = fl.get_federal_income_tax_deduction(int(self.data_list[22]), self.data_list[11])
+        self.finance_info[1] = fl.get_medicare_deduction(int(self.data_list[22]))
+        self.finance_info[2] = fl.get_state_income_tax_deduction(self.data_list[4], int(self.data_list[22]))
+        self.finance_info[3] = fl.get_social_security_deduction(int(self.data_list[22]))
+        self.finance_info[4] = fl.total_salary_deduction(int(self.data_list[22]), self.data_list[11], self.data_list[4])
 
 
 class AddPage(Screen):
+
+    def __init__(self, **kwargs):
+        super(AddPage, self).__init__(**kwargs)
 
     married = StringProperty("N")
     kParticipation = StringProperty("N")
@@ -244,25 +262,44 @@ class AddPage(Screen):
     healthTier = StringProperty("1")
 
     def on_choice6(self, text):
-        if text == "1": self.setTier(1)
-        elif text == "2": self.setTier(2)
-        elif text == "3": self.setTier(3)
-        elif text == "4": self.setTier(4)
+        if text == "1":
+            self.setTier(1)
+        elif text == "2":
+            self.setTier(2)
+        elif text == "3":
+            self.setTier(3)
+        elif text == "4":
+            self.setTier(4)
+
     def on_choice5(self, text):
-        if text == "Salary": self.setPT(1)
-        elif text == "Wage": self.setPT(0)
+        if text == "Salary":
+            self.setPT(1)
+        elif text == "Wage":
+            self.setPT(0)
+
     def on_choice4(self, text):
-        if text == "Yes": self.setUP(1)
-        elif text == "No": self.setUP(0)
+        if text == "Yes":
+            self.setUP(1)
+        elif text == "No":
+            self.setUP(0)
+
     def on_choice3(self, text):
-        if text == "Yes": self.setPP(1)
-        elif text == "No": self.setPP(0)
+        if text == "Yes":
+            self.setPP(1)
+        elif text == "No":
+            self.setPP(0)
+
     def on_choice2(self, text):
-        if text == "Yes": self.setKPar(1)
-        elif text == "No": self.setKPar(0)
+        if text == "Yes":
+            self.setKPar(1)
+        elif text == "No":
+            self.setKPar(0)
+
     def on_choice1(self, text):
-        if text == "Married": self.setMar(1)
-        elif text =="Single": self.setMar(0)
+        if text == "Married":
+            self.setMar(1)
+        elif text == "Single":
+            self.setMar(0)
 
     def setTier(self, n):
         if n == 1:
@@ -277,6 +314,7 @@ class AddPage(Screen):
         elif n == 4:
             self.healthTier = '4'
             print(self.healthTier)
+
     def setPT(self, n):
         if n == 0:
             self.payType = 'W'
@@ -284,6 +322,7 @@ class AddPage(Screen):
         elif n == 1:
             self.payType = 'S'
             print(self.payType)
+
     def setUP(self, n):
         if n == 0:
             self.unionPar = 'N'
@@ -291,6 +330,7 @@ class AddPage(Screen):
         elif n == 1:
             self.unionPar = 'Y'
             print(self.unionPar)
+
     def setPP(self, n):
         if n == 0:
             self.pensionPar = 'N'
@@ -298,6 +338,7 @@ class AddPage(Screen):
         elif n == 1:
             self.pensionPar = 'Y'
             print(self.pensionPar)
+
     def setKPar(self, n):
         if n == 0:
             self.kPparticipation = 'N'
@@ -305,6 +346,7 @@ class AddPage(Screen):
         elif n == 1:
             self.kPparticipation = 'Y'
             print(self.kPparticipation)
+
     def setMar(self, n):
         if n == 0:
             self.married = 'N'
@@ -314,74 +356,76 @@ class AddPage(Screen):
             print(self.married)
 
     def clear_txt(self):
-        self.ids['fn'].text = ""
-        self.ids["ln"].text = ""
-        self.ids["streetadd"].text = ""
-        self.ids["cityadd"].text = ""
-        self.ids["stateadd"].text = ""
-        self.ids["zipadd"].text = ""
-        self.ids["bd"].text = ""
-        self.ids["bm"].text = ""
-        self.ids["by"].text = ""
-        self.ids["healthc"].text = ""
-        self.ids["mar_spinner"].text = '<Marital Status>'
-        self.ids["hirem"].text =""
-        self.ids["hired"].text = ""
-        self.ids["hirey"].text = ""
-        self.ids["kpar_spinner"].text = '<kParticipant>'
-        self.ids["kcon"].text = ""
-        self.ids["penpar_spinner"].text = '<Pension Patricipant>'
-        self.ids["pencon"].text = ""
-        self.ids["union_spinner"].text = '<Union Participant>'
-        self.ids["payType_spinner"].text = '<Pay Type>'
-        self.ids["pay"].text = ""
-        self.ids["hTier_spinner"].text = '<Health Tier>'
+        self.ids['firstname'].text = ""
+        self.ids["lastname"].text = ""
+        self.ids["address"].text = ""
+        self.ids["addresscity"].text = ""
+        self.ids["addressstate"].text = ""
+        self.ids["addresszip"].text = ""
+        self.ids["mob"].text = ""
+        self.ids["dob"].text = ""
+        self.ids["yob"].text = ""
+        self.ids["healthCare"].text = ""
+        self.ids["married"].text = '<Marital Status>'
+        self.ids["hireMonth"].text = ""
+        self.ids["hireDay"].text = ""
+        self.ids["hireYear"].text = ""
+        self.ids["kParticipate"].text = '<kParticipant>'
+        self.ids["kContribution"].text = ""
+        self.ids["pensionP"].text = '<Pension Patricipant>'
+        self.ids["pensionC"].text = ""
+        self.ids["unionP"].text = '<Union Participant>'
+        self.ids["payType"].text = '<Pay Type>'
+        self.ids["payAmount"].text = ""
+        self.ids["healthcareIns"].text = ""
+        self.ids["dentalIns"].text = ""
+        self.ids["opticalIns"].text = ""
+        self.ids["healthTier"].text = '<Health Tier>'
 
     def backBttn(self):
         self.clear_txt()
         self.manager.current = "main"
 
-
     def addEmp(self, mar, kp, pp, up, pt, ht):
-        name = self.ids["fn"].text
-        lastname = self.ids["ln"].text
-        addressStreet = self.ids["streetadd"].text
-        addressCity = self.ids["cityadd"].text
-        addressState = self.ids["stateadd"].text
-        addresszip = self.ids["zipadd"].text
-        birthday = self.ids["bd"].text
-        birthmonth = self.ids["bm"].text
-        birthyear = self.ids["by"].text
-        healthcare = self.ids["healthc"].text
+        firstname = self.ids['firstname'].text
+        lastname = self.ids["lastname"].text
+        addressStreet = self.ids["address"].text
+        addressCity = self.ids["addresscity"].text
+        addressState = self.ids["addressstate"].text
+        addresszip = self.ids["addresszip"].text
+        birthday = self.ids["dob"].text
+        birthmonth = self.ids["mob"].text
+        birthyear = self.ids["yob"].text
+        healthcare = self.ids["healthCare"].text
         married = mar
-        hiremonth = self.ids["hirem"].text
-        hireday = self.ids["hired"].text
-        hireyear = self.ids["hirey"].text
+        hiremonth = self.ids["hireMonth"].text
+        hireday = self.ids["hireDay"].text
+        hireyear = self.ids["hireYear"].text
 
         kPar = kp
-        kcon = self.ids["kcon"].text
+        kcon = self.ids["kContribution"].text
         penpar = pp
-        pencon = self.ids["pencon"].text
+        pencon = self.ids["pensionC"].text
         upar = up
         payt = pt
-        pay = self.ids["pay"].text
+        pay = self.ids["payAmount"].text
 
-        hcare = self.ids["hcare"].text
-        dcare = self.ids["dcare"].text
-        ocare = self.ids["ocare"].text
+        hcare = self.ids["healthcareIns"].text
+        dcare = self.ids["dentalIns"].text
+        ocare = self.ids["opticalIns"].text
+
         htier = ht
 
-        print(hcare, penpar, married, birthmonth, name, hireyear)
 
-        attempt = Employee.Register(name, lastname, addressStreet, addressCity, addressState, addresszip,birthday, birthmonth,birthyear,healthcare, married, hcare, dcare, ocare, htier, kcon, kPar, penpar, pencon, upar, payt, pay, hireday, hiremonth,hireyear )
+        attempt = Employee.Register(firstname, lastname, addressStreet, addressCity, addressState, addresszip, birthday,
+                                    birthmonth, birthyear, healthcare, married, hcare, dcare, ocare, htier, kcon, kPar,
+                                    penpar, pencon, upar, payt, pay, hireday, hiremonth, hireyear)
         temp_stat = attempt.databaseInsert()
-        self.manager.get_screen('main').refresh_table()
 
         if (temp_stat == 1):
             print("successfully added")
             Alert(title='HR Platform', text='Successfully added a profile')
             self.clear_txt()
-
             self.manager.current = "main"
 
         elif (temp_stat == 0):
@@ -391,7 +435,9 @@ class AddPage(Screen):
 
     def on_click(self):
         self.addEmp(self.married, self.kParticipation, self.pensionPar, self.unionPar, self.payType, self.healthTier)
+        self.manager.get_screen('main').refresh_table()
         print("Submitting")
+
 
 class Edit(Screen):
     col_data = ListProperty(["?", "?", "?"])
@@ -402,7 +448,7 @@ class Edit(Screen):
     def __init__(self, **kwargs):
         super(Edit, self).__init__(**kwargs)
 
-    def hell0(self):
+    def editConnection(self):
         attempt = Employee.CheckInfo(self.col_data[0], self.col_data[1], self.col_data[2])
         self.result = attempt.find()
 
@@ -413,6 +459,24 @@ class Edit(Screen):
                         married,
                         hireMonth, hireDay, hireYear, kParticipate, kContribution, pensionP, pensionC, unionP, payType,
                         payAmount, healthcareIns, dentalIns, opticalIns, healthTier):
+
+        connection: Connection = pymysql.connect(host='localhost',
+                                                 port=3306,
+                                                 user='root',
+                                                 password='root',
+                                                 db='hrdb')
+        cursorObject = connection.cursor()
+
+        cursorObject.execute(
+            "UPDATE `employeeprofile` SET `addressStreet`=%s,`addressCity`=%s,`addressState`=%s,`addressZip`=%s,`birthMonth`=%s,`birthDay`=%s,`birthYear`=%s,`healthcare`=%s,`married`=%s,`hireMonth`=%s,`hireDay`=%s,`hireYear`=%s WHERE `employeeID` = %s",
+            (address, addresscity, addressstate, addresszip, mob, dob, yob, healthCare, married, hireMonth, hireDay,
+             hireYear, employeeid))
+        cursorObject.execute(
+            "UPDATE `financeprofile` SET `kParticipate`=%s,`kContribution`=%s,`pensionParticipate`=%s,`pensionContribution`=%s,`unionParticipate`=%s,`payType`=%s,`payAmount`=%s WHERE `employeeID` = %s",
+            (kParticipate, kContribution, pensionP, pensionC, unionP, payType, payAmount, employeeid))
+        cursorObject.execute(
+            "UPDATE `insuranceprofile` SET `healthcareInsurance`=%s,`dentalInsurance`=%s,`opticalInsurance`=%s,`healthTier`=%s WHERE `employeeID` = %s",
+            (healthcareIns, dentalIns, opticalIns, healthTier, employeeid))
 
         self.data_list[2] = address
         self.data_list[3] = addresscity
@@ -438,17 +502,8 @@ class Edit(Screen):
         self.data_list[26] = opticalIns
         self.data_list[27] = healthTier
 
-        cursorObject.execute(
-            "UPDATE `employeeprofile` SET `addressStreet`=%s,`addressCity`=%s,`addressState`=%s,`addressZip`=%s,`birthMonth`=%s,`birthDay`=%s,`birthYear`=%s,`healthcare`=%s,`married`=%s,`hireMonth`=%s,`hireDay`=%s,`hireYear`=%s WHERE `employeeID` = %s",
-            (address, addresscity, addressstate, addresszip, mob, dob, yob, healthCare, married, hireMonth, hireDay,
-             hireYear, employeeid))
-        cursorObject.execute(
-            "UPDATE `financeprofile` SET `kParticipate`=%s,`kContribution`=%s,`pensionParticipate`=%s,`pensionContribution`=%s,`unionParticipate`=%s,`payType`=%s,`payAmount`=%s WHERE `employeeID` = %s",
-            (kParticipate, kContribution, pensionP, pensionC, unionP, payType, payAmount, employeeid))
-        cursorObject.execute(
-            "UPDATE `insuranceprofile` SET `healthcareInsurance`=%s,`dentalInsurance`=%s,`opticalInsurance`=%s,`healthTier`=%s WHERE `employeeID` = %s",
-            (healthcareIns, dentalIns, opticalIns, healthTier, employeeid))
         connection.commit()
+
     def clear_edit(self):
         self.ids["address"].text = ""
         self.ids["addresscity"].text = ""
@@ -477,8 +532,7 @@ class Edit(Screen):
     def on_click(self):
         self.clear_edit()
         self.manager.get_screen('main').refresh_table()
-        self.manager.current = "main"
-
+        self.editConnection()
 
 class PayRoll(Screen):
     col_data = ListProperty(["?", "?", "?"])
@@ -489,29 +543,12 @@ class PayRoll(Screen):
     def __init__(self, **kwargs):
         super(PayRoll, self).__init__(**kwargs)
 
-    def hello(self):
+    def payrollConnection(self):
         attempt = Employee.CheckInfo(self.col_data[0], self.col_data[1], self.col_data[2])
         self.result = attempt.find()
 
         for x in range(0, 28):
             self.data_list[x] = self.result[x]
-
-    def execute(self):
-        app = App.get_running_app()
-        empcheck = app.root.get_screen("employeecheck")
-        empcheck.check_list = [
-            self.result[22],
-            self.result[11],
-            self.result[4],
-            self.result[10],
-            self.result[0],
-            self.result[1],
-
-        ]
-
-        empcheck.set_attempts()
-        app.root.current = 'employeecheck'
-
 
 
 class ScreenManagement(ScreenManager):
@@ -525,5 +562,3 @@ class samplegui(App):
 
 if __name__ == "__main__":
     samplegui().run()
-
-
